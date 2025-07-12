@@ -1,0 +1,7 @@
+---
+# MySQL role default variables
+mysql_root_password: "root123"
+sns_db_name: "sns_db"
+sns_db_user: "sns_user"
+sns_db_password: "sns_pass"
+allowed_host: "192.168.33.11"

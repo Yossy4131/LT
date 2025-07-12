@@ -1,0 +1,6 @@
+---
+# Nginx role handlers
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted

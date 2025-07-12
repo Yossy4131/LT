@@ -1,0 +1,7 @@
+---
+- name: Setup Web Server
+  hosts: all
+  become: yes
+  roles:
+    - php
+    - nginx

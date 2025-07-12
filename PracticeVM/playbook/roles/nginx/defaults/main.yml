@@ -1,0 +1,4 @@
+---
+# Nginx role default variables
+document_root: "/var/www/html"
+php_version: "8.1"

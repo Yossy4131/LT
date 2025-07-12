@@ -1,0 +1,9 @@
+---
+# PHP role default variables
+php_version: "8.1"
+max_file_size: "10M"
+max_post_size: "20M"
+max_execution_time: "60"
+memory_limit: "256M"
+display_errors: "Off"
+timezone: "Asia/Tokyo"

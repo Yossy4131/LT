@@ -1,0 +1,105 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # Base box設定
+  config.vm.box = "ubuntu/jammy64"
+  config.vm.box_version = "20240301.0.0"
+  
+  # プラグイン設定
+  # Guest Additions自動更新（一時的に無効化）
+  if Vagrant.has_plugin?("vagrant-vbguest")
+    config.vbguest.auto_update = false
+    config.vbguest.no_install = true
+  end
+  
+  # ホスト名管理
+  if Vagrant.has_plugin?("vagrant-hostmanager")
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = true
+    config.hostmanager.manage_guest = true
+    config.hostmanager.ignore_private_ip = false
+    config.hostmanager.include_offline = true
+  end
+  
+  # ディスクサイズ拡張
+  if Vagrant.has_plugin?("vagrant-disksize")
+    config.disksize.size = '20GB'
+  end
+
+  # DBサーバーVM
+  config.vm.define "db-server" do |db|
+    db.vm.hostname = "db-server"
+    db.vm.network "private_network", ip: "192.168.33.10"
+    
+    # ホスト名エイリアス設定
+    if Vagrant.has_plugin?("vagrant-hostmanager")
+      db.hostmanager.aliases = %w(database.local mysql.local)
+    end
+    
+    db.vm.provider "virtualbox" do |vb|
+      vb.name = "LT-db-server"
+      vb.memory = "2048"  # メモリ増量
+      vb.cpus = 2         # CPU増量
+      
+      # VirtualBox最適化設定
+      vb.customize ["modifyvm", :id, "--ioapic", "on"]
+      vb.customize ["modifyvm", :id, "--audio", "none"]
+      vb.customize ["modifyvm", :id, "--usb", "off"]
+      vb.customize ["modifyvm", :id, "--usbehci", "off"]
+    end
+
+    # Ansibleプロビジョニング
+    db.vm.provision "ansible_local" do |ansible|
+      ansible.playbook = "playbook/db-server.yml"
+      ansible.install = true
+      ansible.install_mode = "pip3"
+      ansible.verbose = true
+      # roles_pathを明示的に指定
+      ansible.extra_vars = {
+        ansible_python_interpreter: "/usr/bin/python3"
+      }
+    end
+  end
+
+  # WebサーバーVM
+  config.vm.define "web-server" do |web|
+    web.vm.hostname = "web-server"
+    web.vm.network "private_network", ip: "192.168.33.11"
+    web.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
+    
+    # ホスト名エイリアス設定
+    if Vagrant.has_plugin?("vagrant-hostmanager")
+      web.hostmanager.aliases = %w(localhost.demosns demo.sns.local web.local sns.local app.local)
+    end
+    
+    # PracticeWebディレクトリをマウント
+    web.vm.synced_folder "../PracticeWeb", "/var/www/html", 
+      owner: "www-data", group: "www-data",
+      mount_options: ["dmode=755", "fmode=644"]
+    
+    web.vm.provider "virtualbox" do |vb|
+      vb.name = "LT-web-server"
+      vb.memory = "2048"  # メモリ増量
+      vb.cpus = 2         # CPU増量
+      
+      # VirtualBox最適化設定
+      vb.customize ["modifyvm", :id, "--ioapic", "on"]
+      vb.customize ["modifyvm", :id, "--audio", "none"]
+      vb.customize ["modifyvm", :id, "--usb", "off"]
+      vb.customize ["modifyvm", :id, "--usbehci", "off"]
+    end
+
+    # Ansibleプロビジョニング
+    web.vm.provision "ansible_local" do |ansible|
+      ansible.playbook = "playbook/web-server.yml"
+      ansible.install = true
+      ansible.install_mode = "pip3"
+      ansible.verbose = true
+      # roles_pathを明示的に指定
+      ansible.extra_vars = {
+        ansible_python_interpreter: "/usr/bin/python3"
+      }
+    end
+  end
+end

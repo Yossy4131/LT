@@ -1,0 +1,73 @@
+---
+# PHP role main tasks
+- name: Update package list
+  apt:
+    update_cache: yes
+
+- name: Install PHP and required extensions
+  apt:
+    name:
+      - "php{{ php_version }}-fpm"
+      - "php{{ php_version }}-mysql"
+      - "php{{ php_version }}-curl"
+      - "php{{ php_version }}-mbstring"
+      - "php{{ php_version }}-xml"
+      - "php{{ php_version }}-zip"
+      - "php{{ php_version }}-gd"
+      - "php{{ php_version }}-intl"
+    state: present
+
+- name: Start and enable PHP-FPM service
+  service:
+    name: "php{{ php_version }}-fpm"
+    state: started
+    enabled: yes
+
+- name: Configure PHP-FPM pool
+  lineinfile:
+    path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regexp: "^user = ", line: "user = www-data" }
+    - { regexp: "^group = ", line: "group = www-data" }
+    - {
+        regexp: "^listen = ",
+        line: "listen = /var/run/php/php{{ php_version }}-fpm.sock",
+      }
+    - { regexp: "^listen.owner = ", line: "listen.owner = www-data" }
+    - { regexp: "^listen.group = ", line: "listen.group = www-data" }
+    - { regexp: "^listen.mode = ", line: "listen.mode = 0660" }
+  notify: restart php-fpm
+
+- name: Configure PHP settings for SNS application
+  lineinfile:
+    path: "/etc/php/{{ php_version }}/fpm/php.ini"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - {
+        regexp: "^upload_max_filesize = ",
+        line: "upload_max_filesize = {{ max_file_size }}",
+      }
+    - {
+        regexp: "^post_max_size = ",
+        line: "post_max_size = {{ max_post_size }}",
+      }
+    - {
+        regexp: "^max_execution_time = ",
+        line: "max_execution_time = {{ max_execution_time }}",
+      }
+    - { regexp: "^memory_limit = ", line: "memory_limit = {{ memory_limit }}" }
+    - {
+        regexp: "^display_errors = ",
+        line: "display_errors = {{ display_errors }}",
+      }
+    - { regexp: "^log_errors = ", line: "log_errors = On" }
+    - { regexp: "^date.timezone = ", line: "date.timezone = {{ timezone }}" }
+  notify: restart php-fpm
+
+- name: Ensure PHP-FPM is running
+  service:
+    name: "php{{ php_version }}-fpm"
+    state: started

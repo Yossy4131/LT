@@ -1,0 +1,1 @@
+{"virtualbox":{"/var/www/html":{"owner":"www-data","group":"www-data","mount_options":["dmode=755","fmode=644","uid=33","gid=33","_netdev"],"guestpath":"/var/www/html","hostpath":"C:/codes/LT/PracticeWeb","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"C:/codes/LT/PracticeVM","disabled":false,"__vagrantfile":true}}}

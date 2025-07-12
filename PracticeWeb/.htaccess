@@ -1,0 +1,35 @@
+# Simple SNS .htaccess configuration
+# Note: This file is for Apache servers. Current setup uses Nginx.
+
+RewriteEngine On
+
+# Security headers
+Header always set X-Frame-Options DENY
+Header always set X-Content-Type-Options nosniff
+Header always set X-XSS-Protection "1; mode=block"
+
+# Hide PHP version
+Header unset X-Powered-By
+
+# Prevent access to configuration files
+<Files "*.config.php">
+    Require all denied
+</Files>
+
+<Files "*.inc.php">
+    Require all denied
+</Files>
+
+# Prevent access to hidden files
+<Files ".*">
+    Require all denied
+</Files>
+
+# Error pages
+ErrorDocument 404 /404.php
+ErrorDocument 500 /500.php
+
+# URL rewriting (if needed for clean URLs)
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]

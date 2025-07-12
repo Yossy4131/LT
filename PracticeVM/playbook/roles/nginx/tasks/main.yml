@@ -1,0 +1,176 @@
+---
+# Nginx role main tasks
+- name: Update package list
+  apt:
+    update_cache: yes
+
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Start and enable Nginx service
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Remove default Nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Create Nginx configuration for SNS application
+  copy:
+    content: |
+      server {
+          listen 80;
+          server_name localhost localhost.demosns demo.sns.local;
+          root {{ document_root }};
+          index index.php index.html index.htm;
+
+          location / {
+              try_files $uri $uri/ /index.php?$query_string;
+          }
+
+          location ~ \.php$ {
+              include snippets/fastcgi-php.conf;
+              fastcgi_pass unix:/var/run/php/php{{ php_version }}-fpm.sock;
+              fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+              include fastcgi_params;
+          }
+
+          location ~ /\.ht {
+              deny all;
+          }
+
+          # Security headers
+          add_header X-Frame-Options DENY;
+          add_header X-Content-Type-Options nosniff;
+          add_header X-XSS-Protection "1; mode=block";
+      }
+    dest: /etc/nginx/sites-available/sns
+    mode: "0644"
+
+- name: Enable SNS site
+  file:
+    src: /etc/nginx/sites-available/sns
+    dest: /etc/nginx/sites-enabled/sns
+    state: link
+
+- name: Set correct permissions for web directory
+  file:
+    path: "{{ document_root }}"
+    owner: www-data
+    group: www-data
+    mode: "0755"
+    recurse: yes
+
+- name: Test Nginx configuration
+  command: nginx -t
+  notify: restart nginx
+
+- name: Create PHP info file for testing
+  copy:
+    content: |
+      <?php
+      phpinfo();
+      ?>
+    dest: "{{ document_root }}/info.php"
+    owner: www-data
+    group: www-data
+    mode: "0644"
+
+- name: Fix relative paths in PHP files
+  replace:
+    path: "{{ item.file }}"
+    regexp: "{{ item.pattern }}"
+    replace: "{{ item.replacement }}"
+  with_items:
+    # Fix include paths
+    - {
+        file: "{{ document_root }}/pages/auth/login.php",
+        pattern: '\.\./\.\./\.\./includes/',
+        replacement: "../../includes/",
+      }
+    - {
+        file: "{{ document_root }}/pages/auth/register.php",
+        pattern: '\.\./\.\./\.\./includes/',
+        replacement: "../../includes/",
+      }
+    - {
+        file: "{{ document_root }}/pages/auth/logout.php",
+        pattern: '\.\./\.\./\.\./includes/',
+        replacement: "../../includes/",
+      }
+    - {
+        file: "{{ document_root }}/pages/user/profile.php",
+        pattern: '\.\./\.\./\.\./includes/',
+        replacement: "../../includes/",
+      }
+    # Fix CSS paths
+    - {
+        file: "{{ document_root }}/pages/auth/login.php",
+        pattern: '\.\./\.\./\.\./css/',
+        replacement: "../../css/",
+      }
+    - {
+        file: "{{ document_root }}/pages/auth/register.php",
+        pattern: '\.\./\.\./\.\./css/',
+        replacement: "../../css/",
+      }
+    - {
+        file: "{{ document_root }}/pages/auth/logout.php",
+        pattern: '\.\./\.\./\.\./css/',
+        replacement: "../../css/",
+      }
+    - {
+        file: "{{ document_root }}/pages/user/profile.php",
+        pattern: '\.\./\.\./\.\./css/',
+        replacement: "../../css/",
+      }
+    # Fix JS paths
+    - {
+        file: "{{ document_root }}/pages/auth/login.php",
+        pattern: '\.\./\.\./\.\./js/',
+        replacement: "../../js/",
+      }
+    - {
+        file: "{{ document_root }}/pages/auth/register.php",
+        pattern: '\.\./\.\./\.\./js/',
+        replacement: "../../js/",
+      }
+    - {
+        file: "{{ document_root }}/pages/auth/logout.php",
+        pattern: '\.\./\.\./\.\./js/',
+        replacement: "../../js/",
+      }
+    - {
+        file: "{{ document_root }}/pages/user/profile.php",
+        pattern: '\.\./\.\./\.\./js/',
+        replacement: "../../js/",
+      }
+    # Fix redirect paths
+    - {
+        file: "{{ document_root }}/pages/auth/login.php",
+        pattern: 'Location: \.\./\.\./index\.php',
+        replacement: "Location: ../../index.php",
+      }
+    - {
+        file: "{{ document_root }}/pages/auth/register.php",
+        pattern: 'Location: \.\./\.\./index\.php',
+        replacement: "Location: ../../index.php",
+      }
+    - {
+        file: "{{ document_root }}/pages/auth/logout.php",
+        pattern: 'Location: \.\./\.\./index\.php',
+        replacement: "Location: ../../index.php",
+      }
+    # Fix HTML link paths
+    - {
+        file: "{{ document_root }}/pages/user/profile.php",
+        pattern: 'href="\.\./\.\./index\.php"',
+        replacement: 'href="../../index.php"',
+      }
+  ignore_errors: true
+  when: ansible_os_family == "Debian"
