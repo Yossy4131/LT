@@ -7,11 +7,7 @@ LT発表用の簡易SNSウェブアプリケーションのソースコードで
 ```
 PracticeWeb/
 ├── index.php                    # メインページ（投稿一覧・投稿フォーム）
-├── login.php                    # リダイレクト用（下位互換）
-├── register.php                 # リダイレクト用（下位互換）
-├── logout.php                   # リダイレクト用（下位互換）
-├── profile.php                  # リダイレクト用（下位互換）
-├── .htaccess                    # Apache設定ファイル（参考用）
+├── info.php                     # PHP情報ページ（開発用）
 ├── pages/                       # ページファイル
 │   ├── auth/                    # 認証関連ページ
 │   │   ├── login.php           # ログインページ
@@ -27,18 +23,17 @@ PracticeWeb/
 │   └── style.css               # メインCSS
 ├── js/                         # JavaScript
 │   └── main.js                 # メインJavaScript
-├── docs/                       # ドキュメント
-│   ├── database_design.md      # データベース設計書
-│   ├── application_spec.md     # アプリケーション仕様書
-│   ├── security.md             # セキュリティ設計書
-│   └── functions.md            # 関数・API仕様書
-    └── database_design.md      # データベース設計書
+└── docs/                       # ドキュメント
+    ├── application_spec.md     # アプリケーション仕様書
+    ├── database_design.md      # データベース設計書
+    ├── functions.md            # 関数・API仕様書
+    └── security.md             # セキュリティ設計書
 ```
 
 ## 🎯 主な機能
 
 ### 認証機能
-- **ユーザー登録**: 新規アカウント作成
+- **ユーザー登録**: 新規アカウント作成（登録成功時に自動でログイン画面に遷移）
 - **ログイン**: セッション管理によるログイン
 - **ログアウト**: セッション削除
 - **セキュリティ**: CSRF対策、XSS対策、SQLインジェクション対策
@@ -204,6 +199,19 @@ chmod -R 755 /var/www/html/
 - **パスワード**: `password`
 - **表示名**: `Administrator`
 
+## 🌐 アクセス方法
+
+### 推奨アクセス方法（カスタムドメイン）
+- **メインアクセス**: <http://localhost.demosns>
+- **代替アクセス**: <http://demo.sns.local>
+
+### 従来方式
+- **ポートフォワーディング**: <http://localhost:8080>
+
+### 備考
+- カスタムドメインはvagrant-hostmanagerプラグインにより自動設定されます
+- VM構築時に自動的にhostsファイルが更新されます
+
 ## 🔧 カスタマイズ
 
 ### テーマ変更
@@ -288,4 +296,6 @@ ini_set('display_errors', 1);
 
 **作成者**: GitHub Copilot Assistant  
 **作成日**: 2025年7月12日  
+**更新日**: 2025年7月13日  
+**バージョン**: 1.01  
 **用途**: LT発表用デモアプリケーション

@@ -15,8 +15,8 @@ LT発表において、AI活用事例として、VirtualBoxとVagrantを用い�
 ## 技術スタック
 
 ### インフラ
-- VirtualBox 7.0+
-- Vagrant 2.3+
+- VirtualBox 7.1+
+- Vagrant 2.4+
 - Ansible (local provisioning)
 - Ubuntu 22.04 LTS
 
@@ -53,10 +53,13 @@ PracticeVM/
 ```
 PracticeWeb/
 ├── index.php                  # メインページ
-├── login.php                  # ログインページ
-├── register.php               # ユーザー登録ページ
-├── profile.php                # プロフィールページ
-├── logout.php                 # ログアウト処理
+├── pages/                     # ページファイル
+│   ├── auth/                  # 認証関連ページ
+│   │   ├── login.php         # ログインページ
+│   │   ├── register.php      # ユーザー登録ページ
+│   │   └── logout.php        # ログアウト処理
+│   └── user/                  # ユーザー関連ページ
+│       └── profile.php       # プロフィールページ
 ├── includes/
 │   ├── config.php            # 設定・DB接続
 │   ├── auth.php              # 認証関連関数
@@ -65,7 +68,11 @@ PracticeWeb/
 │   └── style.css             # スタイルシート
 ├── js/
 │   └── main.js               # JavaScript機能
-└── .htaccess                 # Apache設定 (参考用)
+└── docs/                     # ドキュメント
+    ├── application_spec.md   # アプリケーション仕様書
+    ├── database_design.md    # データベース設計書
+    ├── functions.md          # 関数・API仕様書
+    └── security.md           # セキュリティ設計書
 ```
 
 ## データベース設計
@@ -127,8 +134,8 @@ PracticeWeb/
 ## 構築・実行手順
 
 ### 1. 前提条件
-- VirtualBox 7.0以上
-- Vagrant 2.3以上
+- VirtualBox 7.1以上
+- Vagrant 2.4以上
 
 ### 2. 環境構築
 ```bash
@@ -137,7 +144,9 @@ vagrant up
 ```
 
 ### 3. アクセス
-- URL: http://localhost:8080
+- URL: http://localhost.demosns （推奨・カスタムドメイン）
+- URL: http://demo.sns.local （代替・カスタムドメイン）
+- URL: http://localhost:8080 （従来方式）
 - 初期ユーザー: admin / password
 
 ## LT発表での活用ポイント
@@ -181,3 +190,9 @@ GitHub Copilot Assistant
 
 ## 作成日
 2025年7月12日
+
+## 更新日
+2025年7月13日
+
+## バージョン
+1.01

@@ -27,8 +27,8 @@
 ## 🔧 技術スタック
 
 ### インフラ
-- VirtualBox 7.0+
-- Vagrant 2.3+
+- VirtualBox 7.1+
+- Vagrant 2.4+
 - Ansible (local provisioning)
 - Ubuntu 22.04 LTS
 
@@ -80,8 +80,8 @@ LT/
 
 ### 前提条件
 以下のソフトウェアがインストールされていること：
-- VirtualBox 7.0以上
-- Vagrant 2.3以上
+- VirtualBox 7.1以上
+- Vagrant 2.4以上
 
 ### 構築手順
 
@@ -178,10 +178,12 @@ LT/
 
 ### 🚀 新機能・改善点
 
+- **アカウント作成フロー改善**: 新規登録成功時に自動でログイン画面に遷移
 - **自動パス修正**: Ansibleによるファイルパス自動修正機能
 - **カスタムドメイン**: localhost.demosns / demo.sns.local での簡単アクセス  
 - **プラグイン最適化**: vagrant-hostmanager, vagrant-vbguest 等の自動インストール
 - **エラー自動修正**: プロビジョニング時の相対パス問題を自動解決
+- **プロジェクトクリーンアップ**: 冗長ファイルを削除し、構造を最適化
 
 ## 📊 データベース構成
 
@@ -373,5 +375,6 @@ vagrant ssh web-server -c "ls -la /var/www/html/pages/auth/"
 
 **作成者**: GitHub Copilot Assistant  
 **作成日**: 2025年7月12日  
-**バージョン**: 1.0  
+**更新日**: 2025年7月13日  
+**バージョン**: 1.01  
 **用途**: LT発表用デモアプリケーション

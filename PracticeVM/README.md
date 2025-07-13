@@ -42,8 +42,8 @@ PracticeVM/
 ### 1. 前提条件の確認
 以下のソフトウェアがインストールされていることを確認してください：
 
-- VirtualBox 7.0以上
-- Vagrant 2.3以上
+- VirtualBox 7.1以上
+- Vagrant 2.4以上
 
 ### 2. 仮想マシンの起動
 ```bash
@@ -271,8 +271,10 @@ vagrant provision web-server
 ## 🏷️ バージョン情報
 
 - **作成日**: 2025年7月12日
-- **Vagrant**: 2.3+
-- **VirtualBox**: 7.0+
+- **更新日**: 2025年7月13日
+- **バージョン**: 1.01
+- **Vagrant**: 2.4+
+- **VirtualBox**: 7.1+
 - **Ubuntu**: 22.04 LTS
 - **MySQL**: 8.0
 - **PHP**: 8.1
