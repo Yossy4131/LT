@@ -144,10 +144,24 @@ vagrant up
 ```
 
 ### 3. アクセス
-- URL: http://localhost.demosns （推奨・カスタムドメイン）
-- URL: http://demo.sns.local （代替・カスタムドメイン）
-- URL: http://localhost:8080 （従来方式）
+- URL: <http://localhost.demosns> （推奨・カスタムドメイン）
+- URL: <http://demo.sns.local> （代替・カスタムドメイン）
+- URL: <http://localhost:8080> （従来方式）
+- URL: <http://192.168.33.11> （直接IPアクセス）
 - 初期ユーザー: admin / password
+
+### 4. カスタムドメインが利用できない場合
+他のPC環境でカスタムドメインにアクセスできない場合は以下を確認：
+
+1. **プラグインの確認・インストール**:
+   ```bash
+   vagrant plugin install vagrant-hostmanager
+   vagrant reload
+   ```
+
+2. **代替アクセス方法**:
+   - `http://localhost:8080` （最も確実）
+   - `http://192.168.33.11` （VM直接アクセス）
 
 ## LT発表での活用ポイント
 

@@ -101,7 +101,11 @@ vagrant up
      - <http://localhost.demosns> （カスタムドメイン・推奨）
      - <http://demo.sns.local> （カスタムドメイン・代替）
    - **従来方式**: <http://localhost:8080>
+   - **直接IPアクセス**: <http://192.168.33.11>
    - **初期ログインユーザー**: `admin` / `password`
+
+   **注意**: 他のPC環境でカスタムドメインにアクセスできない場合は、
+   `http://localhost:8080` または `http://192.168.33.11` をお使いください。
 
 ### VM構成とアクセス情報
 
@@ -312,6 +316,28 @@ cat /etc/hosts | grep localhost.demosns
 ## 🐛 トラブルシューティング
 
 ### よくある問題と解決方法
+
+#### カスタムドメイン（localhost.demosns）にアクセスできない
+
+**症状**: 他のPCで`http://localhost.demosns`にアクセスできない
+
+**解決方法**:
+```bash
+# プラグインの確認・インストール
+vagrant plugin list | findstr hostmanager
+vagrant plugin install vagrant-hostmanager
+
+# VM再起動でhostsファイル更新
+vagrant reload
+
+# 手動でhostsファイル更新
+vagrant hostmanager
+```
+
+**代替アクセス方法**:
+- `http://localhost:8080` （最も確実）
+- `http://192.168.33.11` （VM直接アクセス）
+- `http://demo.sns.local` （代替カスタムドメイン）
 
 #### VM起動エラー
 
